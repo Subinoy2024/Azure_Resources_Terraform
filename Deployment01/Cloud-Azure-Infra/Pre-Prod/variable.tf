@@ -7,9 +7,9 @@ variable "vnets" {
 variable "subnets" {
 }
 
-# variable "nsgs" {
-# }
-
+variable "nsgs" {
+}
+# variable "associations" {}
 /*
 variable "databases" {
   type = map(object({

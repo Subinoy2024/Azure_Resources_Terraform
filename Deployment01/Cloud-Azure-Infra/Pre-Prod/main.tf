@@ -49,7 +49,7 @@ module "virtual_network" {
 
 
 
-/*
+
 ############################
 # NETWORK SECURITY GROUP
 ############################
@@ -60,6 +60,7 @@ module "nsg" {
     for k, v in var.nsgs :
     k => {
       name     = v.name
+      rg_key   = v.rg_key
       rg_name  = module.resource_group.names[v.rg_key]
       location = module.resource_group.locations[v.rg_key]
       rules    = v.rules
@@ -67,57 +68,91 @@ module "nsg" {
   }
 }
 
-/*
-############################
-# VIRTUAL MACHINE
-############################
-module "virtual_machine" {
-  source = "../../Modules-Azure/azurerm_virtual_machine"
+####################################
+# NETWORK SECURITY GROUP ASSOCIATION
+####################################
 
-  vms = {
-    for k, v in var.vms :
-    k => {
-      name       = v.name
-      vm_size   = v.vm_size
-      rg_name   = module.resource_group.names[v.rg_key]
-      location  = module.resource_group.locations[v.rg_key]
-      subnet_id = module.virtual_network.subnet_ids[v.subnet_key]
+# module "subnet_nsg_association" {
+#   source = "../../Modules-Azure/azurerm_nsg_association"
+
+#   associations = {
+#     for k, s in var.subnets :
+#     k => {
+#       subnet_id = module.virtual_network.subnet_ids[k]
+#       nsg_id    = module.nsg.ids[s.nsg_key]
+#     }
+#   }
+# }
+module "subnet_nsg_association" {
+  depends_on = [ module.resource_group,module.virtual_network,module.nsg ]
+ source = "../../Modules-Azure/azurerm_nsg_association"
+
+  associations = {
+    db_subnet = {
+      subnet_name = "db"
+      vnet_name   = "vnet-preprod"
+      nsg_name    = "remote_access"
+      rg_name     = "HR"
     }
+      app_subnet = {
+      subnet_name = "app"
+      vnet_name   = "vnet-preprod"
+      nsg_name    = "remote_access"
+      rg_name     = "HR"
+    }
+
+
   }
 }
-
 # ############################
-# # DATABASE
+# # VIRTUAL MACHINE
 # ############################
-# module "database" {
-#   source = "../.."
+# module "virtual_machine" {
+#   source = "../../Modules-Azure/azurerm_virtual_machine"
 
-#   databases = {
-#     for k, v in var.databases :
+#   vms = {
+#     for k, v in var.vms :
 #     k => {
-#       name     = v.name
-#       rg_name  = module.resource_group.names[v.rg_key]
-#       location = module.resource_group.locations[v.rg_key]
+#       name       = v.name
+#       vm_size   = v.vm_size
+#       rg_name   = module.resource_group.names[v.rg_key]
+#       location  = module.resource_group.locations[v.rg_key]
+#       subnet_id = module.virtual_network.subnet_ids[v.subnet_key]
 #     }
 #   }
 # }
 
-############################
-# AKS
-############################
-module "aks" {
-  source = "../../Modules-Azure/azurerm_aks"
+# # ############################
+# # # DATABASE
+# # ############################
+# # module "database" {
+# #   source = "../.."
 
-  aks_clusters = {
-    for k, v in var.aks_clusters :
-    k => {
-      name       = v.name
-      rg_name    = module.resource_group.names[v.rg_key]
-      location   = module.resource_group.locations[v.rg_key]
-      subnet_id  = module.virtual_network.subnet_ids[v.subnet_key]
-      node_count = v.node_count
-      vm_size    = v.vm_size
-    }
-  }
-}
-*/
+# #   databases = {
+# #     for k, v in var.databases :
+# #     k => {
+# #       name     = v.name
+# #       rg_name  = module.resource_group.names[v.rg_key]
+# #       location = module.resource_group.locations[v.rg_key]
+# #     }
+# #   }
+# # }
+
+# ############################
+# # AKS
+# ############################
+# module "aks" {
+#   source = "../../Modules-Azure/azurerm_aks"
+
+#   aks_clusters = {
+#     for k, v in var.aks_clusters :
+#     k => {
+#       name       = v.name
+#       rg_name    = module.resource_group.names[v.rg_key]
+#       location   = module.resource_group.locations[v.rg_key]
+#       subnet_id  = module.virtual_network.subnet_ids[v.subnet_key]
+#       node_count = v.node_count
+#       vm_size    = v.vm_size
+#     }
+#   }
+# }

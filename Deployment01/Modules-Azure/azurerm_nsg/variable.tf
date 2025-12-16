@@ -1,7 +1,8 @@
 variable "nsgs" {
   type = map(object({
     name   = string
-    rg_key = string
+    rg_name                  = string
+    location                 = string
 
     rules = list(object({
       name                       = string

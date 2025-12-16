@@ -20,7 +20,7 @@ vnets = {
     rg_key        = "rg1"
     address_space = ["10.0.0.0/16"]
   }
-   vnet2 = {
+  vnet2 = {
     name          = "vnet-preprod2"
     rg_key        = "rg1"
     address_space = ["10.0.1.0/27"]
@@ -29,8 +29,8 @@ vnets = {
 
 subnets = {
   app = {
-    vnet_key = "vnet1" #k
-    prefix   = "10.0.1.0/24" #v
+    vnet_key = "vnet1"       
+    prefix   = "10.0.1.0/24" 
   }
   db = {
     vnet_key = "vnet1"
@@ -38,10 +38,28 @@ subnets = {
   }
 }
 
-/*
+
 nsgs = {
-  app_nsg = {
-    name   = "app-nsg"
+  remote_access = {
+    name   = "remote_access"
+    rg_key = "rg1"
+
+    rules = [
+      {
+        name                       = "remote_access"
+        priority                   = 101
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "3389"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+      }
+    ]
+  }
+  ssh_access = {
+    name   = "ssh_access"
     rg_key = "rg1"
 
     rules = [
@@ -59,4 +77,4 @@ nsgs = {
     ]
   }
 }
-*/
+
