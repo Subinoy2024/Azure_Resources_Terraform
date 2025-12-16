@@ -28,7 +28,6 @@ module "storage_account" {
   }
 }
 
-/*
 ############################
 # VNET + SUBNET (DYNAMIC)
 ############################
@@ -38,24 +37,19 @@ module "virtual_network" {
   vnets = {
     for k, v in var.vnets :
     k => {
-      name     = v.name
-      rg_name  = module.resource_group.names[v.rg_key]
-      location = module.resource_group.locations[v.rg_key]
+      name          = v.name
+      rg_name       = module.resource_group.names[v.rg_key]
+      location      = module.resource_group.locations[v.rg_key]
       address_space = v.address_space
     }
   }
 
-  subnets = {
-    for k, s in var.subnets :
-    k => merge(
-      s,
-      {
-        nsg_id = module.nsg.ids[s.nsg_key]
-      }
-    )
-  }
+  subnets = var.subnets
 }
 
+
+
+/*
 ############################
 # NETWORK SECURITY GROUP
 ############################
@@ -73,6 +67,7 @@ module "nsg" {
   }
 }
 
+/*
 ############################
 # VIRTUAL MACHINE
 ############################

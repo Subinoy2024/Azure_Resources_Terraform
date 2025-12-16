@@ -7,7 +7,6 @@ resource "azurerm_network_security_group" "this" {
 
   dynamic "security_rule" {
     for_each = each.value.rules
-
     content {
       name                       = security_rule.value.name
       priority                   = security_rule.value.priority
