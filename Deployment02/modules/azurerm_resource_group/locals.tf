@@ -6,9 +6,9 @@
 #   }
 # }
 
-locals {
-  rg_name = {
-    for k, v in var.rgs :
-    k => "${v.name}-${k}-${random_integer.rg_suffix[k].result}"
-  }
-}
+# locals {
+#   rg_name = {
+#     for k, v in var.rgs :
+#     k => "${v.name}-${k}-${random_integer.rg_suffix[k].result}"
+#   }
+# }
