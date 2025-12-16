@@ -1,7 +1,8 @@
 # This is resource group creation block 
 resource "azurerm_resource_group" "rgdetail"{
     for_each = var.rgs
-    name = local.rg_name[each.key]
+    # name = local.rg_name[each.key]
+    name = each.value.name
     location = each.value.location
     tags = each.value.tags
     managed_by = each.value.managed_by
