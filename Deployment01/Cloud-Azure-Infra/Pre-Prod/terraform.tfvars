@@ -29,8 +29,8 @@ vnets = {
 
 subnets = {
   app = {
-    vnet_key = "vnet1"       
-    prefix   = "10.0.1.0/24" 
+    vnet_key = "vnet1"
+    prefix   = "10.0.1.0/24"
   }
   db = {
     vnet_key = "vnet1"
@@ -75,6 +75,19 @@ nsgs = {
         destination_address_prefix = "*"
       }
     ]
+  }
+}
+
+pip01 = {
+  pip1 = {
+    name    = "publicip01"
+    rg_key  = "rg1"
+    pip_key = "pip1"
+  }
+  pi2 = {
+    name   = "publicip02"
+    rg_key = "rg1"
+    pip_key="pip2"
   }
 }
 
