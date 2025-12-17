@@ -67,25 +67,34 @@ module "nsg" {
     }
   }
 }
+################################
+# PUBLIC IP
+################################
+module "pip" {
+  source = "../../Modules-Azure/azurerm_public_ip"
+
+  pip01 = {
+    for k, v in var.pip01 :
+    k => {
+      name     = v.name
+      rg_keys  = v.rg_key
+          pip_key = v.pip_key 
+      rg_name  = module.resource_group.names[v.rg_key]
+      location = module.resource_group.locations[v.rg_key]
+    }
+  }
+}
+
+
+
 
 ####################################
 # NETWORK SECURITY GROUP ASSOCIATION
 ####################################
 
-# module "subnet_nsg_association" {
-#   source = "../../Modules-Azure/azurerm_nsg_association"
-
-#   associations = {
-#     for k, s in var.subnets :
-#     k => {
-#       subnet_id = module.virtual_network.subnet_ids[k]
-#       nsg_id    = module.nsg.ids[s.nsg_key]
-#     }
-#   }
-# }
 module "subnet_nsg_association" {
-  depends_on = [ module.resource_group,module.virtual_network,module.nsg ]
- source = "../../Modules-Azure/azurerm_nsg_association"
+  depends_on = [module.resource_group, module.virtual_network, module.nsg]
+  source     = "../../Modules-Azure/azurerm_nsg_association"
 
   associations = {
     db_subnet = {
@@ -94,7 +103,7 @@ module "subnet_nsg_association" {
       nsg_name    = "remote_access"
       rg_name     = "HR"
     }
-      app_subnet = {
+    app_subnet = {
       subnet_name = "app"
       vnet_name   = "vnet-preprod"
       nsg_name    = "remote_access"
@@ -104,23 +113,18 @@ module "subnet_nsg_association" {
 
   }
 }
-# ############################
-# # VIRTUAL MACHINE
-# ############################
-# module "virtual_machine" {
-#   source = "../../Modules-Azure/azurerm_virtual_machine"
 
-#   vms = {
-#     for k, v in var.vms :
-#     k => {
-#       name       = v.name
-#       vm_size   = v.vm_size
-#       rg_name   = module.resource_group.names[v.rg_key]
-#       location  = module.resource_group.locations[v.rg_key]
-#       subnet_id = module.virtual_network.subnet_ids[v.subnet_key]
-#     }
-#   }
-# }
+
+
+
+
+
+
+
+
+
+
+
 
 # # ############################
 # # # DATABASE
@@ -138,9 +142,9 @@ module "subnet_nsg_association" {
 # #   }
 # # }
 
-# ############################
-# # AKS
-# ############################
+############################
+# AKS
+############################
 # module "aks" {
 #   source = "../../Modules-Azure/azurerm_aks"
 
