@@ -85,9 +85,38 @@ pip01 = {
     pip_key = "pip1"
   }
   pi2 = {
-    name   = "publicip02"
-    rg_key = "rg1"
-    pip_key="pip2"
+    name    = "publicip02"
+    rg_key  = "rg1"
+    pip_key = "pip2"
   }
 }
 
+
+vms = {
+  vm1 = {
+    nic_name       = "nic1"
+    location       = "East US"
+    resource_group_name        = "HR"
+    vnet_name      = "vnet-preprod"
+    subnet_name    = "app"
+    public_ip      = "publicip01"
+    vm_name        = "vm1"
+    size           = "Standard_B2s"
+    admin_username = "vmadmin"
+    admin_password = "Ipmith@1234567"
+    source_image_reference = {
+      publisher = "Canonical"
+      offer     = "0001-com-ubuntu-server-jammy"
+      sku       = "22_04-lts"
+      version   = "latest"
+    }
+    os_disk = {
+      caching              = "ReadWrite"
+      storage_account_type = "Standard_LRS"
+    }
+    tags = {
+      environment = "staging"
+    }
+  }
+
+}

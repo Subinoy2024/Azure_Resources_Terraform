@@ -9,7 +9,7 @@ variable "subnets" {
 
 variable "nsgs" {
 }
-#variable "pip00" {}
+variable "vms" {}
 variable "pip01" {}
 
 # variable "databases" {
