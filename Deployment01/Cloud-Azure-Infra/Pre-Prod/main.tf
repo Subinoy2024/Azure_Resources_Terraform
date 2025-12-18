@@ -12,6 +12,7 @@ module "resource_group" {
 # STORAGE ACCOUNT
 ############################
 module "storage_account" {
+  depends_on = [ module.resource_group ]
   source = "../../Modules-Azure/azurerm_storage_account"
 
   storage_accounts = {
@@ -32,6 +33,7 @@ module "storage_account" {
 # VNET + SUBNET (DYNAMIC)
 ############################
 module "virtual_network" {
+  depends_on = [ module.resource_group ]
   source = "../../Modules-Azure/azurerm_virtual_network"
 
   vnets = {
@@ -54,6 +56,7 @@ module "virtual_network" {
 # NETWORK SECURITY GROUP
 ############################
 module "nsg" {
+  depends_on = [ module.virtual_network ]
   source = "../../Modules-Azure/azurerm_nsg"
 
   nsgs = {
@@ -71,6 +74,7 @@ module "nsg" {
 # PUBLIC IP
 ################################
 module "pip" {
+  depends_on = [ module.virtual_network ]
   source = "../../Modules-Azure/azurerm_public_ip"
 
   pip01 = {
@@ -78,7 +82,7 @@ module "pip" {
     k => {
       name     = v.name
       rg_keys  = v.rg_key
-          pip_key = v.pip_key 
+      pip_key  = v.pip_key
       rg_name  = module.resource_group.names[v.rg_key]
       location = module.resource_group.locations[v.rg_key]
     }
@@ -114,7 +118,15 @@ module "subnet_nsg_association" {
   }
 }
 
+####################################
+# AZURE VIRTUAL MACHINE
+####################################
 
+module "AzureVM" {
+  depends_on = [module.resource_group, module.virtual_network, module.pip, module.nsg, module.subnet_nsg_association]
+  source     = "../../Modules-Azure/azurerm_virtual_machine"
+  vms        = var.vms
+}
 
 
 
