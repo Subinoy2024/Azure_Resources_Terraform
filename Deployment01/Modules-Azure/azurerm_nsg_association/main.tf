@@ -1,8 +1,4 @@
-# resource "azurerm_subnet_network_security_group_association" "example" {
-#   for_each=var.associations
-#   subnet_id                 = each.value.subnet_id
-#   network_security_group_id = each.value.network_security_group_id
-# }
+
 data "azurerm_subnet" "subnet" {
   for_each = var.associations
 
